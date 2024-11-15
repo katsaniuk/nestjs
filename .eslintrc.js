@@ -9,6 +9,7 @@ module.exports = {
   extends: [
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
+    'prettier',
   ],
   root: true,
   env: {
@@ -21,5 +22,13 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
+    'max-len': ['error', { 'code': 80 }],
+    'no-console': 'warn',
+    'no-debugger': 'warn',
+    'no-duplicate-imports': 'error',
+    'no-unused-vars': 'warn',
+    'prefer-const': 'error',
+    'quotes': ['error', 'single'],
+    'semi': ['error', 'always']
   },
 };

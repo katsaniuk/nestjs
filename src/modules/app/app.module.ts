@@ -2,18 +2,17 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from '../user/user.module';
-import {ConfigModule, ConfigService} from "@nestjs/config";
-import {SequelizeModule} from "@nestjs/sequelize";
-import configurations from "../configurations";
-import process from "node:process";
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { User } from '../user/models/user.model';
 
 @Module({
   imports: [
     UserModule,
     ConfigModule.forRoot({
-    isGlobal: true,
-    load: []
-  }),
+      isGlobal: true,
+      load: [],
+    }),
     SequelizeModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -26,9 +25,9 @@ import process from "node:process";
         database: configService.get('db_name'),
         synchronize: true,
         autoLoadModels: true,
-        models: []
-      })
-    })
+        models: [User],
+      }),
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
