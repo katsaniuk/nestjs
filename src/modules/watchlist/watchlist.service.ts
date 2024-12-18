@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Watchlist } from './models/watchlist.model';
 import { CreateAssetResponse } from './response';
@@ -11,19 +15,41 @@ export class WatchlistService {
   ) {}
 
   async createAsset(user, dto): Promise<CreateAssetResponse> {
-    const watchList = {
-      user: user.id,
-      name: dto.name,
-      assetId: dto.assetId,
-    };
-    await this.watchlistRepository.create(watchList);
-    return watchList;
+    try {
+      const watchList = {
+        user: user.id,
+        name: dto.name,
+        assetId: dto.assetId,
+      };
+      await this.watchlistRepository.create(watchList);
+      return watchList;
+    } catch (error) {
+      console.error('Create asset error:', error);
+      throw new InternalServerErrorException(
+        'Error creating asset in watchlist',
+      );
+    }
   }
 
   async deleteAsset(userId: number, assetId: string): Promise<boolean> {
-    await this.watchlistRepository.destroy({
-      where: { user: userId, id: assetId },
-    });
-    return true;
+    try {
+      const deletedRows = await this.watchlistRepository.destroy({
+        where: { user: userId, id: assetId },
+      });
+
+      if (deletedRows === 0) {
+        throw new NotFoundException('Asset not found for deletion');
+      }
+
+      return true;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      console.error('Delete asset error:', error);
+      throw new InternalServerErrorException(
+        'Error deleting asset from watchlist',
+      );
+    }
   }
 }
